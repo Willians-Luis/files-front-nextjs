@@ -1,6 +1,6 @@
 {
-  "name": "file-front-nextjs-simple",
-  "version": "0.1.0",
+  "name": "front-files-next-simple",
+  "version": "0.0.1",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",

@@ -6,7 +6,7 @@ import { Status } from "@/components/status"
 import { UploadFile } from "@/components/upload-file"
 import { FileType } from "@/types/file-type"
 import { FolderType } from "@/types/folder-type"
-import { Download, Edit, FolderOpen, Music, Play, Trash } from "lucide-react"
+import { Download, Edit, Music, Play, Trash } from "lucide-react"
 import Link from "next/link"
 import { useEffect, useState } from "react"
 
