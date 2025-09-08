@@ -17,8 +17,8 @@ export default async function Files({ params }: Props) {
     return (
         <>
             <div className="flex w-full space-x-2">
-                <FolderOpen className="text-slate-100" />
-                <h1 className="text-xl text-slate-100">{data.name}</h1>
+                <FolderOpen className="text-gray-300" />
+                <h1 className="text-xl text-gray-300">{data.name}</h1>
             </div>
             <List folder={data} />
         </>

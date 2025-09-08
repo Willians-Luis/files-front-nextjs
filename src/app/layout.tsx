@@ -30,7 +30,7 @@ export default function RootLayout({
       <body
         className={`antialiased`}
       >
-        <div className="flex flex-col items-center min-h-screen px-3 py-10 bg-gradient-to-r from-blue-500 to-indigo-600 space-y-8">
+        <div className="flex flex-col items-center min-h-screen px-3 pt-3 pb-10 bg-gray-950">
           {children}
         </div>
       </body>

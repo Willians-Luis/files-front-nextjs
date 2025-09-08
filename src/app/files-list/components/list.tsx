@@ -42,7 +42,7 @@ export default function List({ folder }: { folder: FolderType }) {
                 body: JSON.stringify({ name }),
             })
             if (!response.ok) {
-                window.alert("Erro ao editar arquivo!")
+                return window.alert("Erro ao editar arquivo!")
             }
             window.alert("Sucesso ao editar arquivo!")
             fetchFiles()
@@ -58,37 +58,13 @@ export default function List({ folder }: { folder: FolderType }) {
                     method: 'DELETE',
                 })
                 if (!response.ok) {
-                    window.alert("Erro ao excluir arquivo!")
+                    return window.alert("Erro ao excluir arquivo!")
                 }
                 window.alert("Sucesso ao excluir arquivo!")
                 fetchFiles()
             } catch (error) {
                 window.alert("Erro ao excluir arquivo!")
             }
-        }
-    }
-
-    const downloadFileByFilename = async (filename: string) => {
-        try {
-            if (window.confirm("Deseja iniciar o download?")) {
-                const response = await fetch(`${url}/file/download/${filename}`)
-
-                if (!response.ok) {
-                    throw new Error('Erro ao baixar o arquivo')
-                }
-
-                const blob = await response.blob()
-                const downloadUrl = window.URL.createObjectURL(blob)
-                const a = document.createElement('a')
-                a.style.display = 'none'
-                a.href = downloadUrl
-                a.download = filename
-                document.body.appendChild(a)
-                a.click()
-                window.URL.revokeObjectURL(downloadUrl)
-            }
-        } catch (error) {
-            window.alert("Erro ao baixar arquivo!")
         }
     }
 
@@ -116,18 +92,18 @@ export default function List({ folder }: { folder: FolderType }) {
                 {files.map((item) => (
                     <li
                         key={item.id}
-                        className="flex items-center justify-between w-full p-2 bg-gray-950 rounded-md shadow-sm transition-colors duration-300 space-x-4"
+                        className="flex items-center justify-between w-full p-2 bg-gray-800 rounded-md shadow-sm transition-colors duration-300 space-x-4"
                     >
                         <div className="flex space-x-2 items-center overflow-x-hidden">
                             <div className=" flex items-center justify-center w-14">
                                 {item.mimetype.includes("video") && (
                                     <Link href={`/player-video/${item.id}`}>
-                                        <Play className="w-6 h-6 text-slate-200 rounded-md hover:bg-gray-700 active:bg-gray-600" />
+                                        <Play className="w-6 h-6 text-gray-300 rounded-md hover:text-gray-600 active:text-gray-600" />
                                     </Link>
                                 )}
                                 {item.mimetype.includes("audio") && (
                                     <Link href={`/player-audio/${item.id}`}>
-                                        <Music className="w-6 h-6 text-slate-200 rounded-md hover:bg-gray-700 active:bg-gray-600" />
+                                        <Music className="w-6 h-6 text-gray-300 rounded-md hover:text-gray-600 active:text-gray-600" />
                                     </Link>
                                 )}
                                 {item.mimetype.includes("image") && (
@@ -137,29 +113,30 @@ export default function List({ folder }: { folder: FolderType }) {
                                 )}
                             </div>
                             <div className="flex flex-col flex-1">
-                                <p className="text-slate-200 overflow-hidden">
+                                <p className="text-gray-300 overflow-hidden">
                                     {`${item.name.replace(/^\d+_/, '').toLowerCase()}`}
                                 </p>
-                                <p className="text-slate-200 overflow-hidden">
+                                <p className="text-gray-300 overflow-hidden">
                                     {formatFileSize(item.size)}
                                 </p>
                             </div>
                         </div>
 
                         <div className="flex flex-col gap-2 items-center sm:flex-row">
-                            <Download
-                                onClick={() => downloadFileByFilename(item.filename)}
-                                className="w-6 h-6 text-slate-200 rounded-md hover:bg-gray-700 active:bg-gray-600 cursor-pointer"
-                            />
+                            <a href={`${url}/file/download/${item.filename}`} download>
+                                <Download
+                                    className="w-6 h-6 text-gray-300 rounded-md hover:text-gray-600 active:text-gray-600 cursor-pointer"
+                                />
+                            </a>
 
                             <Edit
                                 onClick={() => updateFile(item)}
-                                className="w-6 h-6 text-slate-200 rounded-md hover:bg-gray-700 active:bg-gray-600 cursor-pointer"
+                                className="w-6 h-6 text-gray-300 rounded-md hover:text-gray-600 active:text-gray-600 cursor-pointer"
                             />
 
                             <Trash
                                 onClick={() => deleteFile(item.filename)}
-                                className="w-6 h-6 text-slate-200 rounded-md hover:bg-gray-700 active:bg-gray-600 cursor-pointer"
+                                className="w-6 h-6 text-gray-300 rounded-md hover:text-gray-600 active:text-gray-600 cursor-pointer"
                             />
                         </div>
                     </li>

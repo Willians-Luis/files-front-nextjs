@@ -14,7 +14,7 @@ export default async function AudioPlayer({ params }: Props) {
 
   return (
     <>
-      <h1 className='text-slate-100'>{data.name}</h1>
+      <h1 className='text-gray-300 w-full overflow-auto'>{data.name}</h1>
       <audio controls className="w-80">
         <source src={`${url}/file/stream/${data.filename}`} type={data.mimetype} />
         Seu navegador não suporta a tag de áudio.

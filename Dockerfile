@@ -1,28 +1,4 @@
-# # Etapa de build
-# FROM node:alpine AS build
-# #FROM arm64v8/node:alpine AS build
-# WORKDIR /app
-# COPY package*.json ./
-# RUN npm install
-# COPY . .
-# # Expõe a variável de ambiente durante o build
-# ARG NEXT_PUBLIC_API_URL
-# ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
-
-# RUN npm run build
-
-# # Etapa de produção
-# #FROM arm64v8/node:alpine
-# FROM node:alpine
-# WORKDIR /app
-# COPY --from=build /app ./
-# COPY package*.json ./
-# RUN npm install --production && npm cache clean --force
-# EXPOSE 3000
-# CMD ["npm", "start"]
-
 # Etapa de build
-#FROM node:alpine AS build
 FROM arm64v8/node:alpine AS build
 WORKDIR /app
 
@@ -33,15 +9,14 @@ RUN npm install
 # Copia o restante do código
 COPY . .
 
-# Define a variável de ambiente para o build
-ARG NEXT_PUBLIC_API_URL
-ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+# Define a variável de ambiente ANTES do build
+ARG NEXT_PUBLIC_UNLOCK=alfa
+ENV NEXT_PUBLIC_UNLOCK=${NEXT_PUBLIC_UNLOCK}
 
 # Executa o build do Next.js
 RUN npm run build
 
 # Etapa de produção
-#FROM node:alpine
 FROM arm64v8/node:alpine
 WORKDIR /app
 

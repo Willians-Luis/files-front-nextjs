@@ -16,13 +16,17 @@ export default function Home() {
 
   const router = useRouter()
 
-  const fetchFolders = async () => {
+  const fetchFolders = async (lock: string = "+") => {
     setIsLoading(true)
     try {
-      const response = await fetch(`${url}/folder/isPublic/true`)
-      const data = await response.json()
-      const sortedFolders = data.sort((a: any, b: any) => a.name.localeCompare(b.name))
-      setFolders(sortedFolders)
+      const response = await fetch(`${url}/folder`)
+      const data: FolderType[] = await response.json()
+
+      const sortedAndPublicFolders: FolderType[] = data
+        .filter(f => !f.name.startsWith(lock))
+        .sort((a: any, b: any) => a.name.localeCompare(b.name))
+
+      setFolders(sortedAndPublicFolders)
     } catch (error) {
       setFolders(null)
     } finally {
@@ -101,6 +105,15 @@ export default function Home() {
     }
   }
 
+  const unlock = () => {
+    const name = window.prompt('Digite a senha...')
+    if (name === process.env.NEXT_PUBLIC_UNLOCK) {
+      fetchFolders("~")
+      return
+    }
+    window.alert("Erro!")
+  }
+
   useEffect(() => {
     fetchFolders()
   }, [])
@@ -115,29 +128,33 @@ export default function Home() {
 
   return (
     <>
+      <div className=" w-full flex justify-between">
+        <div className="w-10 h-6" onDoubleClick={() => fetchFolders("+")}/>
+        <div className="w-10 h-6" onDoubleClick={unlock}/>
+      </div>
       <Plus
         size={40}
-        className="border-2 rounded-md text-slate-100 cursor-pointer"
+        className="border-2 border-gray-300 rounded-md text-gray-300 cursor-pointer mb-10"
         onClick={createFolder}
       />
       <ul className="flex flex-col items-center space-y-2 w-full">
         {folders.map((item: FolderType) => (
-          <li key={item.id} className="flex flex-row items-center justify-between p-4 bg-zinc-200 rounded-md shadow-sm w-full">
+          <li key={item.id} className="flex flex-row items-center justify-between p-4 bg-gray-800 rounded-md shadow-sm w-full">
             <div
-              className="flex space-x-2 active:bg-gray-600 transition-colors duration-300 cursor-pointer"
+              className="flex space-x-2 active:text-gray-600 transition-colors duration-300 cursor-pointer"
               onClick={() => router.push(`/files-list/${item.id}`)}
             >
-              <Folder className="text-zinc-800" />
-              <p className="text-zinc-950 font-bold">{item.name}</p>
+              <Folder className="text-gray-300" />
+              <p className="text-gray-300 font-bold">{item.name}</p>
             </div>
 
             <div className="flex space-x-4">
               <Edit
-                className="text-zinc-800 active:bg-gray-600 transition-colors duration-300 cursor-pointer"
+                className="text-gray-300 active:text-gray-600 transition-colors duration-300 cursor-pointer"
                 onClick={() => updateFolder(item.id)}
               />
               <Trash
-                className="text-zinc-800 active:bg-gray-600 transition-colors duration-300 cursor-pointer"
+                className="text-gray-300 active:text-gray-600 transition-colors duration-300 cursor-pointer"
                 onClick={() => deleteFolder(item.id)}
               />
             </div>

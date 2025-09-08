@@ -15,7 +15,7 @@ export default async function VideoPlayer({ params }: Props) {
 
   return (
     <>
-      <h1 className='text-slate-100'>{data.name}</h1>
+      <h1 className='text-gray-300 w-full overflow-auto'>{data.name}</h1>
       <video controls className='m-auto w-96'>
         <source src={`${url}/file/stream/${data.filename}`} type='video/mp4' />
         Seu navegador não suporta a tag de vídeo.
