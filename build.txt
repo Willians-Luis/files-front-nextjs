@@ -3,9 +3,15 @@ build para arm64:
 docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
 
 docker buildx create --use
-docker buildx build --platform linux/arm64 -t willians008/app-files-front-arm64:2.0 --load .
 
-docker push willians008/app-files-front-arm64:2.0
+docker buildx build --platform linux/arm64 -t willians008/app-files-front-arm64:3.0 --load .
+
+docker push willians008/app-files-front-arm64:3.0
+
+
+--Instalar Container
+docker run --name app-files-front --restart always -p 3000:3000 -d willians008/app-files-front-arm64:3.0
+
 
 
 buid normal
