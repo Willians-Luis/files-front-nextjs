@@ -119,48 +119,74 @@ export default function Home() {
   }, [])
 
   if (isLoading) {
-    return <Status content="Carregando..." />
+    return <Status content="Carregando..." type="loading" />
   }
 
   if (!folders) {
-    return <Status content="Erro" />
+    return <Status content="Erro" type="error" />
   }
 
   return (
-    <>
-      <div className=" w-full flex justify-between">
-        <div className="w-10 h-6" onDoubleClick={() => fetchFolders("+")}/>
-        <div className="w-10 h-6" onDoubleClick={unlock}/>
+    <div className="flex flex-col items-center w-full max-w-5xl mx-auto px-2">
+      {/* ÁREAS INVISÍVEIS DE INTERAÇÃO (Easter Eggs) */}
+      <div className="w-full flex justify-between mb-2">
+        <div className="w-12 h-8 cursor-default opacity-0" onDoubleClick={() => fetchFolders("+")} />
+        <div className="w-12 h-8 cursor-default opacity-0" onDoubleClick={unlock} />
       </div>
-      <Plus
-        size={40}
-        className="border-2 border-gray-300 rounded-md text-gray-300 cursor-pointer mb-10"
-        onClick={createFolder}
-      />
-      <ul className="flex flex-col items-center space-y-2 w-full">
+
+      {/* BOTÃO CRIAR PASTA - Centralizado e Estilizado */}
+      <div className="flex flex-col items-center mb-8 group">
+        <button
+          onClick={createFolder}
+          className="p-3 border-2 border-dashed border-gray-600 rounded-xl text-gray-400 hover:text-blue-400 hover:border-blue-400 hover:bg-blue-400/5 transition-all duration-300 group-active:scale-95"
+        >
+          <Plus size={32} />
+        </button>
+        <span className="text-xs text-gray-500 mt-2 font-medium uppercase tracking-widest group-hover:text-blue-400 transition-colors">
+          Nova Pasta
+        </span>
+      </div>
+
+      {/* LISTA DE PASTAS */}
+      <ul className="flex flex-col space-y-3 w-full">
         {folders.map((item: FolderType) => (
-          <li key={item.id} className="flex flex-row items-center justify-between p-4 bg-gray-800 rounded-md shadow-sm w-full">
+          <li
+            key={item.id}
+            className="flex items-center justify-between p-4 bg-gray-800/60 border border-gray-700 rounded-xl shadow-lg hover:bg-gray-800 hover:border-gray-500 transition-all group w-full"
+          >
+            {/* LADO ESQUERDO: Ícone e Nome (Área de clique principal) */}
             <div
-              className="flex space-x-2 active:text-gray-600 transition-colors duration-300 cursor-pointer"
+              className="flex items-center space-x-4 flex-1 min-w-0 cursor-pointer"
               onClick={() => router.push(`/files-list/${item.id}`)}
             >
-              <Folder className="text-gray-300" />
-              <p className="text-gray-300 font-bold">{item.name}</p>
+              <div className="p-2 bg-yellow-500/10 rounded-lg group-hover:bg-yellow-500/20 transition-colors">
+                <Folder className="w-6 h-6 text-yellow-500 fill-current" />
+              </div>
+              <p className="text-gray-200 font-bold truncate text-base sm:text-lg group-hover:text-white transition-colors">
+                {item.name}
+              </p>
             </div>
 
-            <div className="flex space-x-4">
-              <Edit
-                className="text-gray-300 active:text-gray-600 transition-colors duration-300 cursor-pointer"
-                onClick={() => updateFolder(item.id)}
-              />
-              <Trash
-                className="text-gray-300 active:text-gray-600 transition-colors duration-300 cursor-pointer"
-                onClick={() => deleteFolder(item.id)}
-              />
+            {/* LADO DIREITO: Ações */}
+            <div className="flex items-center space-x-2 ml-4">
+              <button
+                onClick={(e) => { e.stopPropagation(); updateFolder(item.id); }}
+                className="p-2.5 text-gray-400 hover:text-blue-400 hover:bg-blue-400/10 rounded-full transition-all"
+                title="Renomear"
+              >
+                <Edit size={20} />
+              </button>
+              <button
+                onClick={(e) => { e.stopPropagation(); deleteFolder(item.id); }}
+                className="p-2.5 text-gray-400 hover:text-red-400 hover:bg-red-400/10 rounded-full transition-all"
+                title="Excluir"
+              >
+                <Trash size={20} />
+              </button>
             </div>
           </li>
         ))}
       </ul>
-    </>
-  )
+    </div>
+  );
 }

@@ -3,10 +3,10 @@ import "./globals.css";
 
 
 export const metadata: Metadata = {
-  title: "GA - Gerenciador de Arquivos",
+  title: "Server",
   description: "Gerenciamento de arquivos via LAN",
   openGraph: {
-    title: "GA - Gerenciador de Arquivos",
+    title: "Server",
     description: "Gerenciamento de arquivos via LAN",
   },
   robots: {
@@ -30,7 +30,7 @@ export default function RootLayout({
       <body
         className={`antialiased`}
       >
-        <div className="flex flex-col items-center min-h-screen px-3 pt-3 pb-10 bg-gray-950">
+        <div className="flex flex-col items-center min-h-screen bg-gray-950">
           {children}
         </div>
       </body>

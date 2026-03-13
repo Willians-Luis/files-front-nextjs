@@ -73,6 +73,19 @@ export default function List({ folder }: { folder: FolderType }) {
         return `${sizeInKB.toFixed(0).padStart(10).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".")} KB`
     }
 
+    const handlePlay = (filename: string) => {
+        const isAndroid = /Android/i.test(navigator.userAgent);
+        const streamUrl = `192.168.31.145:3333/file/stream/${encodeURIComponent(filename)}`
+
+        if (isAndroid) {
+            // Formato Intent para Android
+            window.location.href = `intent://${streamUrl}#Intent;scheme=http;type=video/*;end`
+        } else {
+            // Formato padrão para PC/iOS (Tente o %3A se o : sumir)
+            window.location.href = `vlc:http://${streamUrl}`
+        }
+    }
+
     useEffect(() => {
         fetchFiles()
     }, [folder.id])
@@ -88,56 +101,83 @@ export default function List({ folder }: { folder: FolderType }) {
         <>
             <UploadFile refetchFiles={() => fetchFiles()} folderId={folder.id} />
 
-            <ul className="flex flex-col items-center space-y-2 w-full">
+            <ul className="flex flex-col items-center space-y-4 w-full max-w-4xl mx-auto px-2">
                 {files.map((item) => (
                     <li
                         key={item.id}
-                        className="flex items-center justify-between w-full p-2 bg-gray-800 rounded-md shadow-sm transition-colors duration-300 space-x-4"
+                        className="flex flex-col w-full p-4 bg-gray-800/60 border border-gray-700 rounded-xl shadow-lg transition-all gap-3"
                     >
-                        <div className="flex space-x-2 items-center overflow-x-hidden">
-                            <div className=" flex items-center justify-center w-14">
+                        {/* LINHA SUPERIOR: Player Principal + Nome do Arquivo */}
+                        <div className="flex items-center gap-3 w-full">
+                            <div className="flex-shrink-0">
                                 {item.mimetype.includes("video") && (
-                                    <Link href={`/player-video/${item.id}`}>
-                                        <Play className="w-6 h-6 text-gray-300 rounded-md hover:text-gray-600 active:text-gray-600" />
+                                    <Link href={`/player-video/${item.id}`} className="block p-2 bg-blue-500/10 rounded-lg hover:bg-blue-500/20 transition-colors">
+                                        <Play className="w-6 h-6 text-blue-400 fill-current" />
                                     </Link>
                                 )}
                                 {item.mimetype.includes("audio") && (
-                                    <Link href={`/player-audio/${item.id}`}>
-                                        <Music className="w-6 h-6 text-gray-300 rounded-md hover:text-gray-600 active:text-gray-600" />
+                                    <Link href={`/player-audio/${item.id}`} className="block p-2 bg-purple-500/10 rounded-lg hover:bg-purple-500/20 transition-colors">
+                                        <Music className="w-6 h-6 text-purple-400" />
                                     </Link>
                                 )}
                                 {item.mimetype.includes("image") && (
-                                    <Link href={`/player-image/${item.id}`} className="w-14">
-                                        <Image filename={item.filename} alt="Imagem" />
+                                    <Link href={`/player-image/${item.id}`} className="block w-10 h-10 rounded-lg overflow-hidden border border-gray-600">
+                                        <Image filename={item.filename} alt="Preview" />
                                     </Link>
                                 )}
                             </div>
-                            <div className="flex flex-col flex-1">
-                                <p className="text-gray-300 overflow-hidden">
-                                    {`${item.name.replace(/^\d+_/, '').toLowerCase()}`}
-                                </p>
-                                <p className="text-gray-300 overflow-hidden">
-                                    {formatFileSize(item.size)}
+
+                            <div className="flex-1 min-w-0">
+                                <p className="text-gray-100 font-semibold truncate text-base">
+                                    {item.name.toLowerCase()}
                                 </p>
                             </div>
                         </div>
 
-                        <div className="flex flex-col gap-2 items-center sm:flex-row">
-                            <a href={`${url}/file/download/${item.filename}`} download>
-                                <Download
-                                    className="w-6 h-6 text-gray-300 rounded-md hover:text-gray-600 active:text-gray-600 cursor-pointer"
-                                />
-                            </a>
+                        {/* LINHA INFERIOR: VLC, Tamanho e Botões de Ação */}
+                        <div className="flex items-center justify-between pt-2 border-t border-gray-700/50">
+                            <div className="flex items-center gap-3">
+                                {/* Botão VLC (Apenas se for vídeo) */}
+                                {item.mimetype.includes("video") && (
+                                    <button
+                                        onClick={() => handlePlay(item.filename)}
+                                        className="flex items-center gap-1.5 bg-orange-600 hover:bg-orange-500 text-white text-[11px] font-black px-3 py-1.5 rounded-md uppercase shadow-sm active:scale-95 transition-all"
+                                    >
+                                        <div className="w-2 h-2 bg-white rounded-full animate-pulse" />
+                                        VLC
+                                    </button>
+                                )}
 
-                            <Edit
-                                onClick={() => updateFile(item)}
-                                className="w-6 h-6 text-gray-300 rounded-md hover:text-gray-600 active:text-gray-600 cursor-pointer"
-                            />
+                                {/* Tamanho do Arquivo */}
+                                <span className="text-xs font-mono text-gray-400 bg-gray-900/50 px-2 py-1 rounded">
+                                    {formatFileSize(item.size)}
+                                </span>
+                            </div>
 
-                            <Trash
-                                onClick={() => deleteFile(item.filename)}
-                                className="w-6 h-6 text-gray-300 rounded-md hover:text-gray-600 active:text-gray-600 cursor-pointer"
-                            />
+                            {/* Grupo de Ações */}
+                            <div className="flex items-center gap-1 sm:gap-2">
+                                <a
+                                    href={`${url}/file/download/${item.filename}`}
+                                    download
+                                    className="p-2 text-gray-400 hover:text-green-400 hover:bg-green-400/10 rounded-lg transition-all"
+                                >
+                                    <Download className="w-5 h-5" />
+                                </a>
+
+                                <button
+                                    onClick={() => updateFile(item)}
+                                    className="p-2 text-gray-400 hover:text-blue-400 hover:bg-blue-400/10 rounded-lg transition-all"
+                                >
+                                    <Edit className="w-5 h-5" />
+                                </button>
+
+                                <button
+                                    onClick={() => deleteFile(item.filename)}
+                                    className="p-2 text-gray-400 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition-all"
+                                >
+                                    <Trash className="w-5 h-5" />
+                                </button>
+                            </div>
                         </div>
                     </li>
                 ))}
